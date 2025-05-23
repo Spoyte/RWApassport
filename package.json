@@ -1,0 +1,27 @@
+{
+  "name": "rwapassport",
+  "version": "1.0.0",
+  "description": "**Verifiable Credentials for Real-World Assets on Avalanche**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@chainlink/contracts": "^1.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/node": "^22.15.21",
+    "hardhat": "^2.24.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
