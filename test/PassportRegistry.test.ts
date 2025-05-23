@@ -1,20 +1,18 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { PassportRegistry } from "../typechain-types";
-import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import hre from "hardhat";
 
 describe("PassportRegistry", function () {
-  let passportRegistry: PassportRegistry;
-  let owner: SignerWithAddress;
-  let issuer: SignerWithAddress;
-  let user: SignerWithAddress;
+  let passportRegistry: any;
+  let owner: any;
+  let issuer: any;
+  let user: any;
 
   beforeEach(async function () {
-    [owner, issuer, user] = await ethers.getSigners();
+    [owner, issuer, user] = await hre.ethers.getSigners();
 
-    const PassportRegistry = await ethers.getContractFactory("PassportRegistry");
+    const PassportRegistry = await hre.ethers.getContractFactory("PassportRegistry");
     passportRegistry = await PassportRegistry.deploy(
-      ethers.ZeroAddress, // No price feed for testing
+      hre.ethers.ZeroAddress, // No price feed for testing
       owner.address
     );
     await passportRegistry.waitForDeployment();
@@ -45,7 +43,7 @@ describe("PassportRegistry", function () {
     it("Should not allow non-owner to add issuer", async function () {
       await expect(
         passportRegistry.connect(user).addAuthorizedIssuer(issuer.address)
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      ).to.be.revertedWithCustomError(passportRegistry, "OwnableUnauthorizedAccount");
     });
   });
 
@@ -56,15 +54,15 @@ describe("PassportRegistry", function () {
 
     it("Should create a passport successfully", async function () {
       const assetType = "art";
-      const metadataHash = ethers.keccak256(ethers.toUtf8Bytes("test metadata"));
+      const metadataHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test metadata"));
       const metadata = {
         title: "Test Art",
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await expect(
         passportRegistry.connect(issuer).createPassport(
@@ -86,15 +84,15 @@ describe("PassportRegistry", function () {
 
     it("Should not allow unauthorized issuer to create passport", async function () {
       const assetType = "art";
-      const metadataHash = ethers.keccak256(ethers.toUtf8Bytes("test metadata"));
+      const metadataHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test metadata"));
       const metadata = {
         title: "Test Art",
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await expect(
         passportRegistry.connect(user).createPassport(
@@ -107,15 +105,15 @@ describe("PassportRegistry", function () {
     });
 
     it("Should not create passport with empty asset type", async function () {
-      const metadataHash = ethers.keccak256(ethers.toUtf8Bytes("test metadata"));
+      const metadataHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test metadata"));
       const metadata = {
         title: "Test Art",
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await expect(
         passportRegistry.connect(issuer).createPassport(
@@ -134,14 +132,14 @@ describe("PassportRegistry", function () {
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await expect(
         passportRegistry.connect(issuer).createPassport(
           assetType,
-          ethers.ZeroHash,
+          hre.ethers.ZeroHash,
           metadata,
           proofs
         )
@@ -156,15 +154,15 @@ describe("PassportRegistry", function () {
       await passportRegistry.addAuthorizedIssuer(issuer.address);
       
       const assetType = "art";
-      const metadataHash = ethers.keccak256(ethers.toUtf8Bytes("test metadata"));
+      const metadataHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test metadata"));
       const metadata = {
         title: "Test Art",
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await passportRegistry.connect(issuer).createPassport(
         assetType,
@@ -177,9 +175,9 @@ describe("PassportRegistry", function () {
 
     it("Should verify passport successfully", async function () {
       const newProofs = [
-        ethers.toUtf8Bytes("proof1"),
-        ethers.toUtf8Bytes("proof2"),
-        ethers.toUtf8Bytes("proof3")
+        hre.ethers.toUtf8Bytes("proof1"),
+        hre.ethers.toUtf8Bytes("proof2"),
+        hre.ethers.toUtf8Bytes("proof3")
       ];
 
       await expect(
@@ -193,8 +191,8 @@ describe("PassportRegistry", function () {
     it("Should update verification level based on proof count", async function () {
       // Test ENHANCED level (2 proofs)
       const enhancedProofs = [
-        ethers.toUtf8Bytes("proof1"),
-        ethers.toUtf8Bytes("proof2")
+        hre.ethers.toUtf8Bytes("proof1"),
+        hre.ethers.toUtf8Bytes("proof2")
       ];
 
       await passportRegistry.connect(user).verifyPassport(tokenId, enhancedProofs);
@@ -202,7 +200,7 @@ describe("PassportRegistry", function () {
       expect(passport.verificationLevel).to.equal(1); // ENHANCED
 
       // Test BASIC level (1 proof)
-      const basicProofs = [ethers.toUtf8Bytes("proof1")];
+      const basicProofs = [hre.ethers.toUtf8Bytes("proof1")];
       await passportRegistry.connect(user).verifyPassport(tokenId, basicProofs);
       passport = await passportRegistry.getPassport(tokenId);
       expect(passport.verificationLevel).to.equal(0); // BASIC
@@ -215,15 +213,15 @@ describe("PassportRegistry", function () {
       
       await passportRegistry.addAuthorizedIssuer(issuer.address);
       const assetType = "art";
-      const metadataHash = ethers.keccak256(ethers.toUtf8Bytes("test metadata"));
+      const metadataHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test metadata"));
       const metadata = {
         title: "Test Art",
         description: "Test Description",
         category: "Digital Art",
         certifications: ["Test Cert"],
-        attestationHashes: [ethers.keccak256(ethers.toUtf8Bytes("test"))]
+        attestationHashes: [hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"))]
       };
-      const proofs = [ethers.toUtf8Bytes("test proof")];
+      const proofs = [hre.ethers.toUtf8Bytes("test proof")];
 
       await passportRegistry.connect(issuer).createPassport(
         assetType,
@@ -236,7 +234,7 @@ describe("PassportRegistry", function () {
     });
 
     it("Should return verified data hash status", async function () {
-      const testHash = ethers.keccak256(ethers.toUtf8Bytes("test"));
+      const testHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("test"));
       expect(await passportRegistry.isVerifiedDataHash(testHash)).to.be.false;
     });
   });
