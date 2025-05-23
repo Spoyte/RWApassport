@@ -7,7 +7,11 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji",
+    "deploy:local": "npx hardhat run scripts/deploy.ts --network hardhat",
+    "verify": "npx hardhat verify --network fuji"
   },
   "keywords": [],
   "author": "",
